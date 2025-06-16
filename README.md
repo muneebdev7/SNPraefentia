@@ -247,6 +247,16 @@ snap --input snps.xlsx --species "Pseudomonas aeruginosa" --domain-weight 3.0 --
 snap --input snps.xlsx --species "Klebsiella pneumoniae" --verbose --log-file snap_run.log
 ```
 
+## Running Tests
+
+This package uses Python's built-in unittest framework for testing all functions in the package.
+
+To run all tests:
+
+```bash
+python -m unittest discover -s snap/tests
+```
+
 ## Troubleshooting
 
 ### Common Issues
