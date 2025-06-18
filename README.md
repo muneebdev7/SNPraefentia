@@ -1,22 +1,23 @@
-# SNAP: SNP Prioritization Tool
+# SNPraefentia v1.0.0: Advanced SNP Prioritization Tool
 
-SNAP (SNP Prioritization) is a comprehensive tool for prioritizing Single Nucleotide Polymorphisms (SNPs) in bacterial genomes. It helps researchers identify potentially significant variants by analyzing sequencing depth, amino acid changes, and protein domain information.
+SNPraefentia is a comprehensive tool for prioritizing Single Nucleotide Polymorphisms (SNPs) in microbial genomes. It helps in identifying 
+potentially significant variants by analyzing sequencing depth, amino acid changes, and protein domain information.
 
 ## Installation
 
-SNAP can be installed using pip:
+SNPraefentia can be installed using pip:
 
 ```bash
 # Install from PyPI
-pip install snap
+pip install snpraefentia
 ```
 
 Or you can install from source:
 
 ```bash
 # Clone the repository
-git clone https://github.com/muneebdev7/SNAP.git
-cd snap
+git clone https://github.com/muneebdev7/SNPraefentia.git
+cd SNPraefentia
 
 # Install
 pip install .
@@ -27,7 +28,8 @@ pip install -e .
 
 ### Dependencies
 
-SNAP requires the following Python packages, which will be automatically installed:
+SNPraefentia requires the following Python packages, which will be automatically installed:
+
 - pandas (≥1.0.0)
 - numpy (≥1.18.0)
 - requests (≥2.22.0)
@@ -38,11 +40,11 @@ SNAP requires the following Python packages, which will be automatically install
 
 ### NCBI Taxonomy Database
 
-On first use, SNAP needs to download the NCBI taxonomy database. This is a one-time process that requires approximately 600+ MB of disk space:
+On first use, SNPraefentia needs to download the NCBI taxonomy database. This is a one-time process that requires approximately 600+ MB of disk space:
 
 ```bash
 # This happens automatically on first use, but might take a few minutes
-# You can also trigger it manually before running SNAP:
+# You can also trigger it manually before running SNPraefentia:
 python -c "from ete3 import NCBITaxa; ncbi = NCBITaxa()"
 ```
 
@@ -50,13 +52,13 @@ The database will be stored in `~/.etetoolkit/` by default.
 
 ### Verifying Installation
 
-To verify that SNAP is installed correctly:
+To verify that the package is installed correctly:
 
 ```bash
-snap --version
+snpraefentia --version
 ```
 
-This should display the current version of SNAP.
+This should display the current version (1.0.0).
 
 ## Usage
 
@@ -65,24 +67,19 @@ This should display the current version of SNAP.
 #### Basic Usage
 
 ```bash
-snap --input your_data.xlsx --species "Bacteroides uniformis" --output results.xlsx
+snpraefentia --input your_data.csv --specie "Bacteroides uniformis" --output results.csv
 ```
 
 #### Required Arguments
 
-- `--input`, `-i`: Path to input Excel file containing SNP data
-- `--species`, `-s`: Bacterial species name (e.g., 'Bacteroides uniformis')
+- `--input`, `-i`: Path to input CSV file containing SNP data
+- `--specie`, `-s`: Bacterial species name (e.g., 'Bacteroides uniformis')
+- `--output`, `-o`: Path to save output CSV file
 
 #### Optional Arguments
 
-- `--output`, `-o`: Path to save output Excel file (default: "snap_results.xlsx")
-
-#### Processing Options
-
+- `--format`, `-f`: Output format override (determined from output file extension)
 - `--uniprot-tolerance`, `-ut`: Length tolerance when matching UniProt entries (default: 50)
-- `--depth-weight`, `-dw`: Weight for normalized depth in priority score (default: 2.0)
-- `--aa-weight`, `-aw`: Weight for amino acid impact in priority score (default: 1.0)
-- `--domain-weight`, `-dow`: Weight for domain position in priority score (default: 1.0)
 
 #### Logging Options
 
@@ -97,41 +94,33 @@ snap --input your_data.xlsx --species "Bacteroides uniformis" --output results.x
 
 ### Python API
 
-You can also use SNAP programmatically in your Python scripts:
+You can also use SNPraefentia programmatically in your Python scripts:
 
 ```python
-from snap.core import SNPPrioritizer
+from snpraefentia.core import SNPAnalyst
 
 # Initialize with default settings
-prioritizer = SNPPrioritizer()
-
-# Or customize parameters
-prioritizer = SNPPrioritizer(
-    uniprot_tolerance=75,  # Adjust tolerance for UniProt matches
-    depth_weight=3.0,      # Give more weight to sequencing depth
-    aa_weight=2.0,         # Increase importance of amino acid changes
-    domain_weight=1.5      # Adjust domain position importance
-)
+analyst = SNPAnalyst()
 
 # Process an input file
-results = prioritizer.run(
-    input_file="path/to/input.xlsx",
+results = analyst.run(
+    input_file="path/to/input.csv",
     species="Bacteroides uniformis",
-    output_file="path/to/output.xlsx"  # Optional, omit to skip saving
+    output_file="path/to/output.csv"  # Optional, omit to skip saving
 )
 
 # Or process an existing DataFrame
 import pandas as pd
-df = pd.read_excel("my_snps.xlsx")
-processed_df = prioritizer.process_dataframe(df, "Bacteroides uniformis")
+df = pd.read_csv("my_snps.csv")
+processed_df = analyst.process_dataframe(df, "Bacteroides uniformis")
 
 # Save results manually if needed
-processed_df.to_excel("custom_output.xlsx", index=False)
+processed_df.to_csv("custom_output.csv", index=False)
 ```
 
 ## Input Format
 
-SNAP expects an Excel file (`.xlsx`) with the following columns:
+SNPraefentia expects a CSV file (`.csv`) with the following columns:
 
 | Column | Description | Example |
 |--------|-------------|---------|
@@ -144,7 +133,7 @@ Additional columns are allowed and will be preserved in the output.
 
 ## Output Format
 
-SNAP adds the following columns to the input data:
+SNPraefentia adds the following columns to the input data:
 
 | Column | Description |
 |--------|-------------|
@@ -166,7 +155,7 @@ SNAP adds the following columns to the input data:
 
 ### Weighting Parameters
 
-SNAP uses a weighted scoring system. You can adjust these weights to customize the prioritization:
+SNPraefentia uses a weighted scoring system. You can adjust these weights to customize the prioritization:
 
 - `depth_weight`: Importance of sequencing depth (default: 2.0)
 - `aa_weight`: Importance of amino acid changes (default: 1.0)
@@ -174,7 +163,7 @@ SNAP uses a weighted scoring system. You can adjust these weights to customize t
 
 Higher weights increase the influence of that factor on the final score. The final score is calculated as:
 
-```
+```math
 (depth_weight * Normalized_Depth + aa_weight * AA_Impact_Score + domain_weight * Domain_Position_Match) / Total Score
 ```
 
@@ -184,7 +173,7 @@ Higher weights increase the influence of that factor on the final score. The fin
 
 ### Logging Options
 
-SNAP provides three verbosity levels:
+SNPraefentia provides three verbosity levels:
 
 - **Normal** (default): Shows INFO level messages (major processing steps)
 - **Verbose** (`--verbose`): Shows DEBUG level messages (detailed information)
@@ -192,59 +181,12 @@ SNAP provides three verbosity levels:
 
 You can also save logs to a file with `--log-file path/to/logfile.log`.
 
-## Scoring Methodology
-
-### Depth Score
-
-Read depth is normalized to [0,1] across all SNPs in the dataset:
-- Higher depth = higher confidence = higher score
-
-### Amino Acid Impact Score
-
-Based on physicochemical properties:
-- Weight difference (normalized by 130)
-- Hydrophobicity difference (normalized by 9)
-- Polarity change (0 or 1)
-- Charge change (0 or 1)
-
-These factors are summed to produce a score between 0 and ~3.
-
-### Domain Position Score
-
-Binary score (0 or 1):
-- 1 if mutation occurs in a functional protein domain
-- 0 otherwise
-
 ## Examples
-
-### Basic SNP Prioritization
-
-```bash
-snap --input snps.xlsx --species "Escherichia coli" --output prioritized_snps.xlsx
-```
-
-### Emphasize Sequencing Depth
-
-```bash
-snap --input snps.xlsx --species "Salmonella enterica" --depth-weight 4.0 --output depth_prioritized.xlsx
-```
-
-### Emphasize Amino Acid Changes
-
-```bash
-snap --input snps.xlsx --species "Staphylococcus aureus" --aa-weight 3.0 --output aa_prioritized.xlsx
-```
-
-### Emphasize Domain Positions
-
-```bash
-snap --input snps.xlsx --species "Pseudomonas aeruginosa" --domain-weight 3.0 --output domain_prioritized.xlsx
-```
 
 ### Detailed Logging
 
 ```bash
-snap --input snps.xlsx --species "Klebsiella pneumoniae" --verbose --log-file snap_run.log
+snpraefentia --input snps.csv --specie "Klebsiella pneumoniae" --output results.csv --verbose --log-file snpraefentia_run.log
 ```
 
 ## Running Tests
@@ -254,7 +196,7 @@ This package uses Python's built-in unittest framework for testing all functions
 To run all tests:
 
 ```bash
-python -m unittest discover -s snap/tests
+python -m unittest discover -s snpraefentia/tests
 ```
 
 ## Troubleshooting
@@ -272,14 +214,6 @@ Solution: Run the following command to download the database:
 python -c "from ete3 import NCBITaxa; ncbi = NCBITaxa()"
 ```
 
-#### UniProt Connection Issues
-
-```
-Warning: Error searching UniProt: Connection error
-```
-
-Solution: Check your internet connection. UniProt lookups require internet access.
-
 #### Species Not Found
 
 ```
@@ -288,24 +222,18 @@ Warning: No taxonomy ID found for [species]
 
 Solution: Check the spelling of your species name. Use the scientific name (genus and species).
 
-#### Input File Format Issues
-
-```
-Error: Could not load data: [error message]
-```
-
-Solution: Ensure your input file is a valid Excel file (.xlsx) with the required columns.
-
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Citation
 
-If you use SNAP in your research, please cite:
+If you use SNPraefentia in your research, please cite:
 
 ```
-Nadeem, Muneeb. (2025). SNAP: SNP Prioritization Tool. GitHub repository. https://github.com/muneebdev7/SNAP
+Khan, N., & Nasir, M. M. (2025). SNPraefentia: A Comprehensive Tool for SNP Prioritization in Bacterial Genomes. 
+GitHub repository: https://github.com/muneebdev7/SNAPraefentia
+Version 1.0.0
 ```
 
 For questions, feature requests, or bug reports, please open an issue on GitHub.
