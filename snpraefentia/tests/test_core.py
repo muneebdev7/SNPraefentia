@@ -21,8 +21,8 @@ class TestSNPAnalyst(unittest.TestCase):
         
     def test_process_dataframe(self):
         """Test processing a dataframe."""
-        species = "Escherichia coli"
-        result = self.analyst.process_dataframe(self.test_df, species)
+        specie = "Escherichia coli"
+        result = self.analyst.process_dataframe(self.test_df, specie)
         
         # Check that all expected columns are present
         expected_columns = [
@@ -35,7 +35,7 @@ class TestSNPAnalyst(unittest.TestCase):
             self.assertIn(col, result.columns)
             
         # Check that bacterial species was added correctly
-        self.assertEqual(result['Bacterial_Species'].iloc[0], species)
+        self.assertEqual(result['Bacterial_Species'].iloc[0], specie)
         
         # Check that depth was extracted correctly
         self.assertEqual(result['Max_Depth'].iloc[0], 10)

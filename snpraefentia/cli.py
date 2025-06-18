@@ -61,12 +61,12 @@ def main():
     # Required arguments
     parser.add_argument("--input", "-i", required=True, 
                         help="Path to input file (supports .xlsx, .xls, .csv, .tsv, .txt)")
-    parser.add_argument("--species", "-s", required=True,
+    parser.add_argument("--specie", "-s", required=True,
                         help="Bacterial species name (e.g., 'Bacteroides uniformis')")
-    
-    # Output options
-    parser.add_argument("--output", "-o", default=None,
+    parser.add_argument("--output", "-o", required=True,
                         help="Path to save output file (supports .xlsx, .xls, .csv, .tsv, .txt)")
+    
+    # Format options
     parser.add_argument("--format", "-f", choices=["excel", "csv", "tsv"], default=None,
                         help="Output format override (default: determined from output file extension)")
     
@@ -131,7 +131,7 @@ def main():
         # Run the main functionality
         logger.info(f"Starting SNPraefentia v{__version__}")
         logger.info(f"Processing input file: {args.input}")
-        logger.info(f"Target species: {args.species}")
+        logger.info(f"Target species: {args.specie}")
         logger.info(f"Output will be saved to: {args.output}")
         
         # Initialize the SNPanalyst class with command line arguments
@@ -142,7 +142,7 @@ def main():
         # Run the pipeline
         results = analyst.run(
             input_file=args.input,
-            species=args.species,
+            species=args.specie,
             output_file=args.output
         )
         
