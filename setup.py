@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'snprior=package.cli:main',
+            'snpraefentia=snpraefentia.cli:main',
         ],
     },
     classifiers=[
