@@ -62,7 +62,7 @@ def main():
     parser.add_argument("--input", "-i", required=True, 
                         help="Path to input file (supports .xlsx, .xls, .csv, .tsv, .txt)")
     parser.add_argument("--specie", "-s", required=True,
-                        help="Bacterial species name (e.g., 'Bacteroides uniformis')")
+                        help="Bacterial specie name (e.g., 'Bacteroides uniformis')")
     parser.add_argument("--output", "-o", required=True,
                         help="Path to save output file (supports .xlsx, .xls, .csv, .tsv, .txt)")
     
@@ -131,7 +131,7 @@ def main():
         # Run the main functionality
         logger.info(f"Starting SNPraefentia v{__version__}")
         logger.info(f"Processing input file: {args.input}")
-        logger.info(f"Target species: {args.specie}")
+        logger.info(f"Target specie: {args.specie}")
         logger.info(f"Output will be saved to: {args.output}")
         
         # Initialize the SNPanalyst class with command line arguments
@@ -139,16 +139,22 @@ def main():
             uniprot_tolerance=args.uniprot_tolerance
         )
         
-        # Run the pipeline
-        results = analyst.run(
-            input_file=args.input,
-            species=args.specie,
-            output_file=args.output
-        )
-        
-        logger.info(f"Results saved to: {args.output}")
-        logger.info("SNPraefentia completed successfully")
-        
+        try:
+            # Run the pipeline
+            results = analyst.run(
+                input_file=args.input,
+                specie=args.specie,
+                output_file=args.output
+            )
+            
+            logger.info(f"Results saved to: {args.output}")
+            logger.info("SNPraefentia completed successfully")
+            
+        except ValueError as ve:
+            # Handle specie validation errors
+            logger.error(str(ve))
+            sys.exit(1)
+            
     except Exception as e:
         logger.error(f"Error: {str(e)}", exc_info=args.verbose)
         sys.exit(1)

@@ -14,7 +14,7 @@
 """Taxonomy processing module.
 
 This module forms the taxonomic foundation of the SNPraefentia analysis pipeline.
-Working with NCBI taxonomy identifiers, it ensures precise species identification
+Working with NCBI taxonomy identifiers, it ensures precise specie identification
 throughout the analysis process.
 """
 
@@ -31,11 +31,31 @@ except Exception as e:
     logger.warning("First-time users need to run 'from ete3 import NCBITaxa; ncbi = NCBITaxa()' to download the taxonomy database")
     ncbi = None
 
-def get_taxid(species_name):
-    """Get NCBI taxonomy ID for a species name.
+def validate_specie_name(specie_name):
+    """Validate if a specie name exists in the NCBI taxonomy database.
     
     Args:
-        species_name: Bacterial species name
+        specie_name: Bacterial specie name to validate
+        
+    Returns:
+        bool: True if specie exists, False otherwise
+    """
+    if not ncbi:
+        logger.error("NCBITaxa not initialized")
+        return False
+        
+    try:
+        name2taxid = ncbi.get_name_translator([specie_name])
+        return specie_name in name2taxid
+    except Exception as e:
+        logger.error(f"Error validating specie name: {str(e)}")
+        return False
+
+def get_taxid(specie_name):
+    """Get NCBI taxonomy ID for a specie name.
+    
+    Args:
+        specie_name: Bacterial specie name
         
     Returns:
         Taxonomy ID as an integer, or None if not found
@@ -45,12 +65,11 @@ def get_taxid(species_name):
         return None
         
     try:
-        name2taxid = ncbi.get_name_translator([species_name])
-        if species_name in name2taxid:
-            return name2taxid[species_name][0]
-        else:
-            logger.warning(f"No taxonomy ID found for {species_name}")
-            return None
+        name2taxid = ncbi.get_name_translator([specie_name])
+        if specie_name in name2taxid:
+            return name2taxid[specie_name][0]
+        logger.warning(f"No taxonomy ID found for {specie_name}")
+        return None
     except Exception as e:
-        logger.warning(f"Error getting taxonomy ID: {str(e)}")
+        logger.error(f"Error getting taxonomy ID: {str(e)}")
         return None
