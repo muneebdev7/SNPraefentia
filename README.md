@@ -1,6 +1,6 @@
-# SNPraefentia v1.0.0: Advanced SNP Prioritization Tool
+# SNPraefentia: SNP Prioritization from Metagenomic Variants
 
-SNPraefentia is a comprehensive tool for prioritizing Single Nucleotide Polymorphisms (SNPs) in microbial genomes. It helps in identifying 
+SNPraefentia is a comprehensive tool for prioritizing Single Nucleotide Polymorphisms (SNPs) in metagenomic variants. It helps in identifying 
 potentially significant variants by analyzing sequencing depth, amino acid changes, and protein domain information.
 
 ## Installation
@@ -224,7 +224,15 @@ Solution: Check the spelling of your species name. Use the scientific name (genu
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+SNPraefentia is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+### Patent Notice
+
+The SNP scoring algorithms and methodologies implemented in this software are protected by patent rights owned by the SNPraefentia Authors. While the source code is available under the Apache License 2.0, usage of the scoring algorithms may require a separate patent license, particularly for commercial applications.
+
+For patent licensing inquiries, please contact the authors.
+
+See the [NOTICE](NOTICE) file for additional details regarding copyright and patent notices.
 
 ## Citation
 
@@ -232,7 +240,7 @@ If you use SNPraefentia in your research, please cite:
 
 ```
 Khan, N., & Nasir, M. M. (2025). SNPraefentia: A Comprehensive Tool for SNP Prioritization in Bacterial Genomes. 
-GitHub repository: https://github.com/muneebdev7/SNAPraefentia
+GitHub repository: https://github.com/muneebdev7/SNPraefentia
 Version 1.0.0
 ```
 
