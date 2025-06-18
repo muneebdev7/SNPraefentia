@@ -1,1 +1,0 @@
-"""Input/Output module for SNAP."""

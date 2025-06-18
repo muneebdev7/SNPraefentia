@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="snap-prioritize",
+    name="snpraefentia",
     version="0.1.0",
-    description="SNAP: SNP Prioritization Tool",
+    description="SNPraefentia: SNP Prioritization Tool",
     author="Nadeem Khan, Muhammad Muneeb Nasir",
     author_email="muneebgojra@gmail.com",
     url="https://github.com/muneebdev7/SNAP",
@@ -17,7 +17,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'snap=snap.cli:main',
+            'snprior=package.cli:main',
         ],
     },
     classifiers=[
