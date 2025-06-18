@@ -1,0 +1,16 @@
+EVIDENCE,AA_POS,EFFECT,GENE
+A:562 C:1,170/538,missense_variant c.508G>T p.Val170Leu,susD_1
+A:416 G:0,120/215,missense_variant c.358C>T p.Pro120Ser,yhgN_1
+A:387 G:0,231/249,missense_variant c.692C>T p.Pro231Leu,gpmA_1
+T:369 C:0,44/538,missense_variant c.130G>A p.Ala44Thr,susD_1
+T:355 C:0,32/538,missense_variant c.94G>A p.Asp32Asn,susD_1
+A:344 G:1,727/843,missense_variant c.2179C>T p.Arg727Cys,smc_1
+G:300 A:0,62/294,missense_variant c.185A>G p.Asp62Gly,xerD_2
+T:279 C:0,544/695,missense_variant c.1630G>A p.Gly544Arg,topB_3
+T:254 C:0,427/820,missense_variant c.1280C>T p.Ser427Leu,pheT
+C:253 T:0,41/277,missense_variant c.121A>G p.Asn41Asp,mutM
+T:247 C:1,506/578,missense_variant c.1517G>A p.Ser506Asn,yejM
+A:244 G:0,103/852,missense_variant c.307C>T p.Pro103Ser,glgP_1
+C:241 T:0,369/479,missense_variant c.1106A>G p.Lys369Arg,srrB
+G:241 A:0,79/502,missense_variant c.235A>G p.Thr79Ala,tycC
+A:240 G:0,83/686,missense_variant c.248G>A p.Arg83His,bgaA
