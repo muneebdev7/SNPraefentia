@@ -1,4 +1,4 @@
-EVIDENCE,AA_POS,EFFECT,GENE
+Evidence,Amino_Acid_Position,Effect,Gene
 A:562 C:1,170/538,missense_variant c.508G>T p.Val170Leu,susD_1
 A:416 G:0,120/215,missense_variant c.358C>T p.Pro120Ser,yhgN_1
 A:387 G:0,231/249,missense_variant c.692C>T p.Pro231Leu,gpmA_1
