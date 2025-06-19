@@ -13,10 +13,10 @@ class TestSNPAnalyst(unittest.TestCase):
         
         # Create a minimal test dataframe
         self.test_df = pd.DataFrame({
-            'EVIDENCE': ['A:10 C:5', 'G:20 T:8', 'T:30 A:15'],
-            'EFFECT': ['p.Ala123Gly', 'p.Trp456Leu', 'missense_variant'],
-            'GENE': ['geneA', 'geneB', 'geneC'],
-            'AA_POS': ['123/500', '456/300', '789/400']
+            'Evidence': ['A:10 C:5', 'G:20 T:8', 'T:30 A:15'],
+            'Effect': ['p.Ala123Gly', 'p.Trp456Leu', 'missense_variant'],
+            'Gene': ['geneA', 'geneB', 'geneC'],
+            'Amino_Acid_Position': ['123/500', '456/300', '789/400']
         })
         
     def test_process_dataframe(self):
@@ -26,7 +26,7 @@ class TestSNPAnalyst(unittest.TestCase):
         
         # Check that all expected columns are present
         expected_columns = [
-            'Bacterial_Species', 'TAX_ID', 'Max_Depth', 'Normalized_Depth',
+            'Bacterial_specie', 'Tax_ID', 'Depth', 'Normalized_Depth',
             'AA_Change', 'AA_Impact_Score', 'Total_AA', 'Mutated_AA',
             'Final_Priority_Score', 'Final_Priority_Score_Percent'
         ]
@@ -34,13 +34,13 @@ class TestSNPAnalyst(unittest.TestCase):
         for col in expected_columns:
             self.assertIn(col, result.columns)
             
-        # Check that bacterial species was added correctly
-        self.assertEqual(result['Bacterial_Species'].iloc[0], specie)
+        # Check that bacterial specie was added correctly
+        self.assertEqual(result['Bacterial_specie'].iloc[0], specie)
         
         # Check that depth was extracted correctly
-        self.assertEqual(result['Max_Depth'].iloc[0], 10)
-        self.assertEqual(result['Max_Depth'].iloc[1], 20)
-        self.assertEqual(result['Max_Depth'].iloc[2], 30)
+        self.assertEqual(result['Depth'].iloc[0], 10)
+        self.assertEqual(result['Depth'].iloc[1], 20)
+        self.assertEqual(result['Depth'].iloc[2], 30)
         
         # Check that AA change was extracted correctly
         self.assertEqual(result['AA_Change'].iloc[0], 'Ala123Gly')
