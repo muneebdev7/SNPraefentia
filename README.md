@@ -5,7 +5,21 @@ potentially significant variants by analyzing sequencing depth, amino acid chang
 
 ## Installation
 
-SNPraefentia can be installed using pip:
+### Setting up the conda environment
+
+First, create a new conda environment with Python 3.11:
+
+```bash
+# Create a new conda environment named 'snp'
+conda create -n snp python=3.11
+
+# Activate the environment
+conda activate snp
+```
+
+### Installing SNPraefentia
+
+With the conda environment activated, install SNPraefentia using pip:
 
 ```bash
 # Install from PyPI
@@ -19,7 +33,7 @@ Or you can install from source:
 git clone https://github.com/muneebdev7/SNPraefentia.git
 cd SNPraefentia
 
-# Install
+# Install package
 pip install .
 
 # Install in development mode (if you want to modify the code)
@@ -105,7 +119,7 @@ analyst = SNPAnalyst()
 # Process an input file
 results = analyst.run(
     input_file="path/to/input.csv",
-    species="Bacteroides uniformis",
+    specie="Bacteroides uniformis",
     output_file="path/to/output.csv"  # Optional, omit to skip saving
 )
 
@@ -124,10 +138,10 @@ SNPraefentia expects a CSV file (`.csv`) with the following columns:
 
 | Column | Description | Example |
 |--------|-------------|---------|
-| `EVIDENCE` | Read depth information | `A:10 C:5` |
-| `EFFECT` | Variant effect prediction | `p.Ala123Gly` |
-| `GENE` | Gene name | `geneA` |
-| `AA_POS` | Amino acid position information | `123/500` |
+| `Evidence` | Read depth information | `A:10 C:5` |
+| `Effect` | Variant effect prediction | `p.Ala123Gly` |
+| `Gene` | Gene name | `geneA` |
+| `Amino_Acid_Position` | Amino acid position information | `123/500` |
 
 Additional columns are allowed and will be preserved in the output.
 
@@ -137,35 +151,18 @@ SNPraefentia adds the following columns to the input data:
 
 | Column | Description |
 |--------|-------------|
-| `Bacterial_Species` | Species name |
-| `TAX_ID` | NCBI taxonomy ID |
-| `Max_Depth` | Maximum read depth extracted from EVIDENCE |
-| `Depth` | Adjusted depth value |
-| `Normalized_Depth` | Depth normalized to range [0,1] |
-| `AA_Change` | Extracted amino acid change (e.g., "AlaGly") |
-| `AA_Impact_Score` | Score based on physicochemical property changes |
-| `Total_AA` | Total protein length |
-| `Mutated_AA` | Position of the mutated amino acid |
+| `Gene` | Gene name |
 | `UniProt_ID` | UniProt identifier if found |
+| `Total_Protein_Length` | Total length of the protein |
+| `Bacterial_Specie` | Species name |
+| `Taxonomic_ID` | NCBI taxonomy ID |
+| `Normalized_Depth` | Depth normalized to range [0,1] |
+| `Amino_Acid_Impact_Score` | Score based on physicochemical property changes |
 | `Domain_Position_Match` | Whether mutation is in a protein domain (1=yes, 0=no) |
 | `Final_Priority_Score` | Combined priority score (0-1) |
-| `Final_Priority_Score_Percent` | Priority score as percentage (0-100%) |
+| `Final_Priority_Score (%)` | Priority score as percentage (0-100%) |
 
 ## Configuration
-
-### Weighting Parameters
-
-SNPraefentia uses a weighted scoring system. You can adjust these weights to customize the prioritization:
-
-- `depth_weight`: Importance of sequencing depth (default: 2.0)
-- `aa_weight`: Importance of amino acid changes (default: 1.0)
-- `domain_weight`: Importance of domain position (default: 1.0)
-
-Higher weights increase the influence of that factor on the final score. The final score is calculated as:
-
-```math
-(depth_weight * Normalized_Depth + aa_weight * AA_Impact_Score + domain_weight * Domain_Position_Match) / Total Score
-```
 
 ### UniProt Parameters
 
@@ -196,7 +193,7 @@ This package uses Python's built-in unittest framework for testing all functions
 To run all tests:
 
 ```bash
-python -m unittest discover -s snpraefentia/tests
+python -m unittest discover -s snpraefentia/tests -v
 ```
 
 ## Troubleshooting
@@ -205,18 +202,19 @@ python -m unittest discover -s snpraefentia/tests
 
 #### Missing NCBI Taxonomy Database
 
-```
+```bash
 Error: NCBITaxa not initialized
 ```
 
 Solution: Run the following command to download the database:
+
 ```bash
 python -c "from ete3 import NCBITaxa; ncbi = NCBITaxa()"
 ```
 
 #### Species Not Found
 
-```
+```bash
 Warning: No taxonomy ID found for [species]
 ```
 
@@ -234,11 +232,19 @@ For patent licensing inquiries, please contact the authors.
 
 See the [NOTICE](NOTICE) file for additional details regarding copyright and patent notices.
 
+## Credits
+
+SNPrafentia was written by [Nadeem Khan](https://github.com/nadeemsines) and [Muhammad Muneeb Nasir](https://github.com/muneebdev7/metabolt) at [Metagenomics Discovery Lab (MDL)](https://sines.nust.edu.pk/) at SINES, NUST.
+
+We thank the following professionals for their extensive assistance in the development of this package:
+
+- [Dr. Masood Ur Rehman Kayani](https://sines.nust.edu.pk/faculty/masood-ur-rehman-kayani/)
+
 ## Citation
 
 If you use SNPraefentia in your research, please cite:
 
-```
+```cmd
 Khan, N., & Nasir, M. M. (2025). SNPraefentia: A Comprehensive Tool for SNP Prioritization in Bacterial Genomes. 
 GitHub repository: https://github.com/muneebdev7/SNPraefentia
 Version 1.0.0
