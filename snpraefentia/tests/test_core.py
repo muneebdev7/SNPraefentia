@@ -26,16 +26,16 @@ class TestSNPAnalyst(unittest.TestCase):
         
         # Check that all expected columns are present
         expected_columns = [
-            'Bacterial_specie', 'Tax_ID', 'Depth', 'Normalized_Depth',
-            'AA_Change', 'AA_Impact_Score', 'Total_AA', 'Mutated_AA',
-            'Final_Priority_Score', 'Final_Priority_Score_Percent'
+            'Bacterial_Specie', 'Taxonomic_ID', 'Depth', 'Normalized_Depth',
+            'AA_Change', 'Amino_Acid_Impact_Score', 'Total_Protein_Length', 'Mutated_AA',
+            'Final_Priority_Score', 'Final_Priority_Score (%)'
         ]
         
         for col in expected_columns:
             self.assertIn(col, result.columns)
             
         # Check that bacterial specie was added correctly
-        self.assertEqual(result['Bacterial_specie'].iloc[0], specie)
+        self.assertEqual(result['Bacterial_Specie'].iloc[0], specie)
         
         # Check that depth was extracted correctly
         self.assertEqual(result['Depth'].iloc[0], 10)
