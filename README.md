@@ -159,7 +159,6 @@ SNPraefentia adds the following columns to the input data:
 | `Normalized_Depth` | Depth normalized to range [0,1] |
 | `Amino_Acid_Impact_Score` | Score based on physicochemical property changes |
 | `Domain_Position_Match` | Whether mutation is in a protein domain (1=yes, 0=no) |
-| `Final_Priority_Score` | Combined priority score (0-1) |
 | `Final_Priority_Score (%)` | Priority score as percentage (0-100%) |
 
 ## Configuration
