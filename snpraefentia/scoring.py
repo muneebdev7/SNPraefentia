@@ -41,14 +41,14 @@ def calculate_priority_score(df):
         df['Domain_Position_Match'] = df['Domain_Position_Match'].fillna(0).astype(float)
         
         # Fill missing AA impact scores with 0
-        df['AA_Impact_Score'] = df['AA_Impact_Score'].fillna(0)
+        df['Amino_Acid_Impact_Score'] = df['Amino_Acid_Impact_Score'].fillna(0)
         
         # Calculate score with fixed weights
         # Depth has highest weight (2.0) as it's a direct measure of evidence
         # AA impact and domain position have equal weights (1.0)
         score = (
             2.0 * df['Normalized_Depth'] + 
-            1.0 * df['AA_Impact_Score'] +
+            1.0 * df['Amino_Acid_Impact_Score'] +
             1.0 * df['Domain_Position_Match']
         ) / 7
         

@@ -11,7 +11,7 @@ class TestScoring(unittest.TestCase):
         """Set up test data."""
         self.test_df = pd.DataFrame({
             'Normalized_Depth': [0.2, 0.5, 0.8],
-            'AA_Impact_Score': [0.3, 0.6, 0.9],
+            'Amino_Acid_Impact_Score': [0.3, 0.6, 0.9],
             'Domain_Position_Match': [0, 1, 1]
         })
         
@@ -32,7 +32,7 @@ class TestScoring(unittest.TestCase):
         
         # Test with missing values
         df_with_na = self.test_df.copy()
-        df_with_na.loc[1, 'AA_Impact_Score'] = None
+        df_with_na.loc[1, 'Amino_Acid_Impact_Score'] = None
         scores_with_na = calculate_priority_score(df_with_na)
         
         # Should still calculate without errors

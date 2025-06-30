@@ -60,8 +60,12 @@ class SNPAnalyst:
             ValueError: If the specie name is invalid
         """
         logger.info("Loading input data...")
-        df = load_data(input_file)
-        
+        try:
+            df = load_data(input_file)
+        except ValueError:
+            # Just re-raise the error without additional logging
+            raise
+            
         # Validate specie name before processing
         if not validate_specie_name(specie):
             raise ValueError(
@@ -90,35 +94,35 @@ class SNPAnalyst:
             Processed DataFrame with additional columns and scores
         """
         # Add bacterial specie if not present
-        if 'Bacterial_Species' not in df.columns:
-            df['Bacterial_Species'] = specie
+        if 'Bacterial_Specie' not in df.columns:
+            df['Bacterial_Specie'] = specie
         else:
-            df['Bacterial_Species'] = df['Bacterial_Species'].fillna(specie)
+            df['Bacterial_Specie'] = df['Bacterial_Specie'].fillna(specie)
             
-        # Clean up species formatting
-        df['Bacterial_Species'] = df['Bacterial_Species'].str.replace('_', ' ')
+        # Clean up specie formatting
+        df['Bacterial_Specie'] = df['Bacterial_Specie'].str.replace('_', ' ')
         
         # Step 2: Fetching taxonomy ID (using pre-validated ID if available)
         logger.info("Fetching taxonomy ID...")
-        df['TAX_ID'] = tax_id if tax_id else df['Bacterial_Species'].apply(get_taxid)
+        df['Taxonomic_ID'] = tax_id if tax_id else df['Bacterial_Specie'].apply(get_taxid)
         
         # Step 3-4: Extract and normalize depth
         logger.info("Processing read depth information...")
-        df['Max_Depth'] = df['EVIDENCE'].apply(extract_depth)
-        df['Depth'] = df['Max_Depth']
+        df['Depth'] = df['Evidence'].apply(extract_depth)
+        #df['Depth'] = df['Max_Depth']
         df['Normalized_Depth'] = normalize_depth(df['Depth'])
         
         # Step 5-7: Process amino acid changes
         logger.info("Analyzing amino acid changes...")
-        df['AA_Change'] = df['EFFECT'].apply(extract_aa_change)
-        df['AA_Impact_Score'] = df.apply(compute_aa_impact, axis=1)
+        df['AA_Change'] = df['Effect'].apply(extract_aa_change)
+        df['Amino_Acid_Impact_Score'] = df.apply(compute_aa_impact, axis=1)
         
         # Step 8-9: Extract AA positions
         logger.info("Processing protein positions...")
-        df['Total_AA'] = df['AA_POS'].apply(
+        df['Total_Protein_Length'] = df['Amino_Acid_Position'].apply(
             lambda x: int(str(x).split('/')[-1]) if '/' in str(x) else None
         )
-        df['Mutated_AA'] = df['AA_POS'].apply(
+        df['Mutated_AA'] = df['Amino_Acid_Position'].apply(
             lambda x: int(str(x).split('/')[0]) if '/' in str(x) else None
         )
         
@@ -126,9 +130,9 @@ class SNPAnalyst:
         logger.info("Searching UniProt database...")
         uniprot_ids = []
         for index, row in df.iterrows():
-            gene = str(row['GENE']).split('_')[0]
-            taxid = row['TAX_ID']
-            length = row['Total_AA']
+            gene = str(row['Gene']).split('_')[0]
+            taxid = row['Taxonomic_ID']
+            length = row['Total_Protein_Length']
             if pd.notna(gene) and pd.notna(taxid) and pd.notna(length):
                 uid = search_uniprot(gene, taxid, length, self.uniprot_tolerance)
             else:
@@ -147,6 +151,6 @@ class SNPAnalyst:
         df['Final_Priority_Score'] = calculate_priority_score(df)
         
         # Add percentage score
-        df['Final_Priority_Score_Percent'] = df['Final_Priority_Score'] * 100
+        df['Final_Priority_Score (%)'] = df['Final_Priority_Score'] * 100
         
         return df

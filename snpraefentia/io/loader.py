@@ -23,6 +23,27 @@ import os
 
 logger = logging.getLogger(__name__)
 
+
+def validate_columns(df):
+    """Validate that the DataFrame has all required columns with correct names.
+    
+    Args:
+        df: DataFrame to validate
+        
+    Raises:
+        ValueError: If required columns are missing or have incorrect names
+    """
+    required_columns = ['Evidence', 'Amino_Acid_Position', 'Effect', 'Gene']
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    
+    if missing_columns:
+        error_msg = (
+            #f"Input file is missing required columns or has incorrect column names.\n"
+            f"Missing/Incorrect columns: {'  '.join(missing_columns)}\n"
+            f"Required column headers must be exactly: {'  '.join(required_columns)}"
+        )
+        raise ValueError(error_msg)
+
 def load_data(file_path):
     """Load SNP data from a file.
     
@@ -34,22 +55,21 @@ def load_data(file_path):
     Returns:
         DataFrame with SNP data
     """
-    try:
-        file_ext = os.path.splitext(file_path)[1].lower()
+    file_ext = os.path.splitext(file_path)[1].lower()
+    
+    logger.debug(f"Loading data from {file_path} (format: {file_ext})")
+    
+    if file_ext in ['.xlsx', '.xls']:
+        df = pd.read_excel(file_path)
+    elif file_ext == '.csv':
+        df = pd.read_csv(file_path)
+    elif file_ext in ['.tsv', '.txt']:
+        df = pd.read_csv(file_path, sep='\t')
+    else:
+        raise ValueError(f"Unsupported file format: {file_ext}. Supported formats: .csv, .tsv, .txt, .xlsx, .xls")
         
-        logger.debug(f"Loading data from {file_path} (format: {file_ext})")
-        
-        if file_ext in ['.xlsx', '.xls']:
-            df = pd.read_excel(file_path)
-        elif file_ext == '.csv':
-            df = pd.read_csv(file_path)
-        elif file_ext in ['.tsv', '.txt']:
-            df = pd.read_csv(file_path, sep='\t')
-        else:
-            raise ValueError(f"Unsupported file format: {file_ext}. Supported formats: .xlsx, .xls, .csv, .tsv, .txt")
-        
-        logger.info(f"Loaded {len(df)} SNPs from {file_path}")
-        return df
-    except Exception as e:
-        logger.error(f"Error loading data: {str(e)}")
-        raise ValueError(f"Could not load data from {file_path}: {str(e)}")
+    # Validate column names
+    validate_columns(df)
+    
+    logger.info(f"Loaded {len(df)} SNPs from {file_path}")
+    return df
