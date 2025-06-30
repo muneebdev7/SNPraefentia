@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="snpraefentia",
-    version="1.0.0",
+    version="1.1.0",
     description="SNPraefentia: SNP Prioritization Tool",
     author="Nadeem Khan, Muhammad Muneeb Nasir",
     author_email="muneebgojra@gmail.com",
