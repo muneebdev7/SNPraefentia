@@ -233,7 +233,7 @@ See the [NOTICE](NOTICE) file for additional details regarding copyright and pat
 
 ## Credits
 
-SNPrafentia was written by [Nadeem Khan](https://github.com/nadeemsines) and [Muhammad Muneeb Nasir](https://github.com/muneebdev7/metabolt) at [Metagenomics Discovery Lab (MDL)](https://sines.nust.edu.pk/) at SINES, NUST.
+SNPrafentia was developed by [Nadeem Khan](https://github.com/nadeemsines) and [Muhammad Muneeb Nasir](https://github.com/muneebdev7/metabolt) at [Metagenomics Discovery Lab (MDL)](https://sines.nust.edu.pk/) at SINES, NUST.
 
 We thank the following professionals for their extensive assistance in the development of this package:
 
