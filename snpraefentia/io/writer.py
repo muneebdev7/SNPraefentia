@@ -42,7 +42,7 @@ def save_data(df, file_path):
             'Normalized_Depth',
             'Amino_Acid_Impact_Score',
             'Domain_Position_Match',
-            'Final_Priority_Score (%)'
+            'Final_Priority_Score'
         ]
         
         # Filter and reorder columns
