@@ -11,10 +11,10 @@ First, create a new conda environment with Python 3.11:
 
 ```bash
 # Create a new conda environment named 'snp'
-conda create -n snp python=3.11
+conda create -y -n snprafentia python=3.11
 
 # Activate the environment
-conda activate snp
+conda activate snprafentia
 ```
 
 ### Installing SNPraefentia
@@ -42,13 +42,18 @@ pip install -e .
 
 ### Dependencies
 
-SNPraefentia requires the following Python packages, which will be automatically installed:
+SNPraefentia requires the following Python packages (see [`requirements.txt`](requirements.txt)):
 
 - pandas (≥1.0.0)
 - numpy (≥1.18.0)
 - requests (≥2.22.0)
 - ete3 (≥3.1.1)
 - openpyxl (≥3.1.5)
+- matplotlib (≥3.0.0)
+- seaborn (≥0.10.0)
+- adjustText (≥0.7.3)
+
+These dependencies will be installed automatically when using pip.
 
 ## First-time Setup
 
@@ -76,19 +81,24 @@ This should display the current version (1.0.0).
 
 ## Usage
 
+
 ### Command Line Interface
 
 #### Basic Usage
 
 ```bash
+# For CSV input/output
 snpraefentia --input your_data.csv --specie "Bacteroides uniformis" --output results.csv
+
+# For Excel input/output
+snpraefentia --input your_data.xlsx --specie "Bacteroides uniformis" --output results.xlsx
 ```
 
 #### Required Arguments
 
-- `--input`, `-i`: Path to input CSV file containing SNP data
+- `--input`, `-i`: Path to input file containing SNP data (CSV or Excel: `.csv`, `.xlsx`)
 - `--specie`, `-s`: Bacterial species name (e.g., 'Bacteroides uniformis')
-- `--output`, `-o`: Path to save output CSV file
+- `--output`, `-o`: Path to save output file (CSV or Excel: `.csv`, `.xlsx`)
 
 #### Optional Arguments
 
@@ -134,7 +144,8 @@ processed_df.to_csv("custom_output.csv", index=False)
 
 ## Input Format
 
-SNPraefentia expects a CSV file (`.csv`) with the following columns:
+
+SNPraefentia accepts both CSV (`.csv`) and Excel (`.xlsx`) files as input. The file should contain the following columns:
 
 | Column | Description | Example |
 |--------|-------------|---------|
@@ -147,7 +158,8 @@ Additional columns are allowed and will be preserved in the output.
 
 ## Output Format
 
-SNPraefentia adds the following columns to the input data:
+
+SNPraefentia outputs results in the same format as specified by the output file extension (`.csv` or `.xlsx`). The following columns are added to the input data:
 
 | Column | Description |
 |--------|-------------|
@@ -159,7 +171,7 @@ SNPraefentia adds the following columns to the input data:
 | `Normalized_Depth` | Depth normalized to range [0,1] |
 | `Amino_Acid_Impact_Score` | Score based on physicochemical property changes |
 | `Domain_Position_Match` | Whether mutation is in a protein domain (1=yes, 0=no) |
-| `Final_Priority_Score (%)` | Priority score as percentage (0-100%) |
+| `Final_Priority_Score` | Priority score as percentage (0-100%) |
 
 ## Configuration
 
