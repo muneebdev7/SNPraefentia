@@ -2,3 +2,5 @@ snpraefentia.egg-info
 __pycache__
 Results
 .vscode
+build
+*.csv
