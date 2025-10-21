@@ -89,7 +89,7 @@ class SNPAnalyst:
             logger.info(f"Saving results to {output_path}")
             save_data(result_df, output_path)
 
-            # --- Automatic Plot Generation ---
+            # Generate Plots for output data using plotting module
             try:
                 from .plotting import plot_boxplot, plot_pie_chart, plot_histogram, plot_top_variants
                 plots_dir = os.path.join(output_dir, "plots")
