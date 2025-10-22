@@ -6,7 +6,7 @@ setup(
     description="SNPraefentia: SNP Prioritization Tool",
     author="Nadeem Khan, Muhammad Muneeb Nasir",
     author_email="muneebgojra@gmail.com",
-    url="https://github.com/muneebdev7/SNAP",
+    url="https://github.com/muneebdev7/SNPraefentia/",
     packages=find_packages(),
     install_requires=[
         "pandas>=1.0.0",
@@ -14,6 +14,9 @@ setup(
         "requests>=2.22.0",
         "ete3>=3.1.1",
         "openpyxl>=3.1.5",
+        "matplotlib>=3.0.0",
+        "seaborn>=0.10.0",
+        "adjustText>=0.7.3",
     ],
     entry_points={
         'console_scripts': [

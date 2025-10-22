@@ -25,141 +25,111 @@ import argparse
 import logging
 import sys
 import os
-from . import __version__
+from . import __version__, check_dependencies
 from .core import SNPAnalyst
 
-def setup_logging(log_file=None, verbose=False, quiet=False):
-    """Configure logging based on command line arguments."""
-    log_level = logging.INFO
-    if verbose:
-        log_level = logging.DEBUG
-    elif quiet:
-        log_level = logging.ERROR
-    
-    # Configure root logger
-    logging.basicConfig(
-        level=log_level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S"
-    )
-    
-    # Add file handler if log file is specified
-    if log_file:
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setFormatter(logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        ))
-        logging.getLogger().addHandler(file_handler)
+class SNPraefentiaCLI:
+    def __init__(self):
+        self.logger = None
+
+    def setup_logging(self, log_file=None, verbose=False, quiet=False):
+        """Configure logging based on command line arguments."""
+        log_level = logging.INFO
+        if verbose:
+            log_level = logging.DEBUG
+        elif quiet:
+            log_level = logging.ERROR
+        logging.basicConfig(
+            level=log_level,
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        if log_file:
+            file_handler = logging.FileHandler(log_file)
+            file_handler.setFormatter(logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            ))
+            logging.getLogger().addHandler(file_handler)
+        self.logger = logging.getLogger("snprior")
+
+    def parse_args(self):
+        parser = argparse.ArgumentParser(
+            description="SNPraefentia: SNP Prioritization Tool",
+            epilog="For more information, visit: https://github.com/muneebdev7/SNPraefentia",
+        )
+        parser.add_argument("--input", "-i", required=True, 
+                            help="Path to input file (supports .xlsx, .xls, .csv, .tsv, .txt)")
+        parser.add_argument("--specie", "-s", required=True,
+                            help="Bacterial specie name (e.g., 'Bacteroides uniformis')")
+        parser.add_argument("--output", "-o", required=True,
+                            help="Path to save output file (supports .xlsx, .xls, .csv, .tsv, .txt)")
+        parser.add_argument("--format", "-f", choices=["excel", "csv", "tsv"], default=None,
+                            help="Output format override (default: determined from output file extension)")
+        parser.add_argument("--uniprot-tolerance", "-ut", type=int, default=50,
+                            help="Length tolerance when matching UniProt entries (default: 50)")
+        parser.add_argument("--verbose", "-v", action="store_true",
+                            help="Increase output verbosity")
+        parser.add_argument("--quiet", "-q", action="store_true",
+                            help="Suppress all non-error output")
+        parser.add_argument("--log-file", "-l",
+                            help="Path to save log file")
+        parser.add_argument("--version", action="version",
+                            version=f"SNPraefentia version {__version__}")
+        args = parser.parse_args()
+        if args.verbose and args.quiet:
+            parser.error("--verbose and --quiet cannot be used together")
+        return args
+
+    def ensure_output_extension(self, args):
+        output_ext = os.path.splitext(args.output)[1].lower()
+        if output_ext not in ['.xlsx', '.xls', '.csv', '.tsv', '.txt']:
+            if args.format == "excel":
+                args.output = f"{args.output}.xlsx"
+            elif args.format == "csv":
+                args.output = f"{args.output}.csv"
+            elif args.format == "tsv":
+                args.output = f"{args.output}.tsv"
+            else:
+                args.output = f"{args.output}.csv"
+        return args
+
+    def run(self):
+        args = self.parse_args()
+        args = self.ensure_output_extension(args)
+        self.setup_logging(log_file=args.log_file, verbose=args.verbose, quiet=args.quiet)
+
+        # Dependency check
+        try:
+            check_dependencies(raise_on_missing=True)
+        except ImportError as e:
+            self.logger.error(str(e))
+            sys.exit(1)
+
+        try:
+            self.logger.info(f"Starting SNPraefentia v{__version__}")
+            self.logger.info(f"Processing input file: {args.input}")
+            self.logger.info(f"Target specie: {args.specie}")
+            self.logger.info(f"Output will be saved to: {args.output}")
+            analyst = SNPAnalyst(uniprot_tolerance=args.uniprot_tolerance)
+            try:
+                analyst.run(
+                    input_file=args.input,
+                    specie=args.specie,
+                    output_file=args.output
+                )
+                self.logger.info(f"Results saved to: {args.output}")
+                self.logger.info("SNPraefentia completed successfully")
+            except ValueError as ve:
+                self.logger.error(str(ve))
+                sys.exit(1)
+        except Exception as e:
+            self.logger.error(f"Error: {str(e)}", exc_info=args.verbose)
+            sys.exit(1)
+        return 0
 
 def main():
-    """Main entry point for the SNPraefentia command-line interface."""
-    parser = argparse.ArgumentParser(
-        description="SNPraefentia: SNP Prioritization Tool",
-        epilog="For more information, visit: https://github.com/muneebdev7/SNPraefentia",
-    )
-    
-    # Required arguments
-    parser.add_argument("--input", "-i", required=True, 
-                        help="Path to input file (supports .xlsx, .xls, .csv, .tsv, .txt)")
-    parser.add_argument("--specie", "-s", required=True,
-                        help="Bacterial specie name (e.g., 'Bacteroides uniformis')")
-    parser.add_argument("--output", "-o", required=True,
-                        help="Path to save output file (supports .xlsx, .xls, .csv, .tsv, .txt)")
-    
-    # Format options
-    parser.add_argument("--format", "-f", choices=["excel", "csv", "tsv"], default=None,
-                        help="Output format override (default: determined from output file extension)")
-    
-    # Processing options
-    parser.add_argument("--uniprot-tolerance", "-ut", type=int, default=50,
-                        help="Length tolerance when matching UniProt entries (default: 50)")
-    
-    # Logging and verbosity options
-    parser.add_argument("--verbose", "-v", action="store_true",
-                        help="Increase output verbosity")
-    parser.add_argument("--quiet", "-q", action="store_true",
-                        help="Suppress all non-error output")
-    parser.add_argument("--log-file", "-l",
-                        help="Path to save log file")
-    
-    # Version and help
-    parser.add_argument("--version", action="version",
-                        version=f"SNPraefentia version {__version__}")
-    
-    args = parser.parse_args()
-    
-    # Check for conflicting arguments
-    if args.verbose and args.quiet:
-        parser.error("--verbose and --quiet cannot be used together")
-    
-    # Set default output file if not provided
-    if not args.output:
-        input_name = os.path.splitext(os.path.basename(args.input))[0]
-        if args.format == "excel":
-            args.output = f"{input_name}_results.xlsx"
-        elif args.format == "csv":
-            args.output = f"{input_name}_results.csv"
-        elif args.format == "tsv":
-            args.output = f"{input_name}_results.tsv"
-        else:
-            # Default to the same format as input if possible
-            input_ext = os.path.splitext(args.input)[1].lower()
-            if input_ext in ['.xlsx', '.xls']:
-                args.output = f"{input_name}_results.xlsx"
-            elif input_ext == '.csv':
-                args.output = f"{input_name}_results.csv"
-            elif input_ext in ['.tsv', '.txt']:
-                args.output = f"{input_name}_results.tsv"
-            else:
-                args.output = f"{input_name}_results.csv"  # Default to CSV
-    
-    # Override output format if specified
-    if args.format:
-        output_path, _ = os.path.splitext(args.output)
-        if args.format == "excel":
-            args.output = f"{output_path}.xlsx"
-        elif args.format == "csv":
-            args.output = f"{output_path}.csv"
-        elif args.format == "tsv":
-            args.output = f"{output_path}.tsv"
-    
-    # Setup logging
-    setup_logging(log_file=args.log_file, verbose=args.verbose, quiet=args.quiet)
-    logger = logging.getLogger("snprior")
-    
-    try:
-        # Run the main functionality
-        logger.info(f"Starting SNPraefentia v{__version__}")
-        logger.info(f"Processing input file: {args.input}")
-        logger.info(f"Target specie: {args.specie}")
-        logger.info(f"Output will be saved to: {args.output}")
-        
-        # Initialize the SNPanalyst class with command line arguments
-        analyst = SNPAnalyst(
-            uniprot_tolerance=args.uniprot_tolerance
-        )
-        
-        try:
-            # Run the pipeline
-            results = analyst.run(
-                input_file=args.input,
-                specie=args.specie,
-                output_file=args.output
-            )
-            
-            logger.info(f"Results saved to: {args.output}")
-            logger.info("SNPraefentia completed successfully")
-            
-        except ValueError as ve:
-            # Handle specie validation errors
-            logger.error(str(ve))
-            sys.exit(1)
-            
-    except Exception as e:
-        logger.error(f"Error: {str(e)}", exc_info=args.verbose)
-        sys.exit(1)
-    
-    return 0
+    cli = SNPraefentiaCLI()
+    return cli.run()
 
 if __name__ == "__main__":
     sys.exit(main())

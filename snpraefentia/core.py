@@ -77,9 +77,31 @@ class SNPAnalyst:
         
         # Save results if output file specified
         if output_file:
-            logger.info(f"Saving results to {output_file}")
-            save_data(result_df, output_file)
-            
+            import os
+            # Create output directory based on output file name (without extension)
+            base_name = os.path.splitext(os.path.basename(output_file))[0]
+            parent_dir = os.path.dirname(output_file) or os.getcwd()
+            output_dir = os.path.join(parent_dir, base_name)
+            os.makedirs(output_dir, exist_ok=True)
+
+            # Save output file inside this directory
+            output_path = os.path.join(output_dir, os.path.basename(output_file))
+            logger.info(f"Saving results to {output_path}")
+            save_data(result_df, output_path)
+
+            # Generate Plots for output data using plotting module
+            try:
+                from .plotting import plot_boxplot, plot_pie_chart, plot_histogram, plot_top_variants
+                plots_dir = os.path.join(output_dir, "plots")
+                os.makedirs(plots_dir, exist_ok=True)
+                plot_boxplot(output_path, plots_dir)
+                plot_pie_chart(output_path, plots_dir)
+                plot_histogram(output_path, plots_dir)
+                plot_top_variants(output_path, plots_dir, top_n=20)
+                logger.info(f"Plots generated in: {plots_dir}")
+            except Exception as pe:
+                logger.error(f"Plotting failed: {pe}")
+
         return result_df
     
     def process_dataframe(self, df, specie, tax_id=None):
