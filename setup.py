@@ -17,6 +17,7 @@ setup(
         "matplotlib>=3.0.0",
         "seaborn>=0.10.0",
         "adjustText>=0.7.3",
+        "rich>=13.0.0",
     ],
     entry_points={
         'console_scripts': [

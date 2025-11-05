@@ -12,6 +12,7 @@ REQUIRED_LIBRARIES = [
     "matplotlib",
     "seaborn",
     "adjustText",
+    "rich",
 ]
 
 def check_dependencies(raise_on_missing: bool = False):
