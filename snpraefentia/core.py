@@ -24,6 +24,7 @@ calculating impacts score, and managing the overall analysis workflow.
 
 import logging
 import pandas as pd
+from rich.console import Console
 from .processors.depth import extract_depth, normalize_depth
 from .processors.amino_acid import extract_aa_change, compute_aa_impact
 from .processors.taxonomy import validate_specie_name, get_taxid
@@ -44,6 +45,11 @@ class SNPAnalyst:
             uniprot_tolerance: Length tolerance when matching UniProt entries
         """
         self.uniprot_tolerance = uniprot_tolerance
+        self.console = Console()
+    
+    def print_status(self, message, style="green"):
+        """Print status messages with Rich formatting."""
+        self.console.print(f"[+] {message}", style=f"bold {style}")
         
     def run(self, input_file, specie, output_file=None):
         """Run the SNP prioritization pipeline on an input file.
@@ -59,20 +65,24 @@ class SNPAnalyst:
         Raises:
             ValueError: If the specie name is invalid
         """
-        logger.info("Loading input data...")
+        self.print_status("Loading input data...")
         try:
             df = load_data(input_file)
+            self.print_status(f"Loaded {len(df)} SNPs from input file", "cyan")
         except ValueError:
             # Just re-raise the error without additional logging
             raise
             
         # Validate specie name before processing
+        self.print_status("Validating species name...")
         if not validate_specie_name(specie):
             raise ValueError(
                 f"Invalid specie name: '{specie}'. Please verify the specie name and try again."
             )
+        self.print_status(f"Species validated: {specie}", "cyan")
         
         # Process the dataframe
+        self.print_status("Processing SNP data...")
         result_df = self.process_dataframe(df, specie)
         
         # Save results if output file specified
@@ -86,7 +96,7 @@ class SNPAnalyst:
 
             # Save output file inside this directory
             output_path = os.path.join(output_dir, os.path.basename(output_file))
-            logger.info(f"Saving results to {output_path}")
+            self.print_status(f"Saving results to {output_path}", "cyan")
             save_data(result_df, output_path)
 
             # Generate Plots for output data using plotting module
@@ -98,9 +108,9 @@ class SNPAnalyst:
                 plot_pie_chart(output_path, plots_dir)
                 plot_histogram(output_path, plots_dir)
                 plot_top_variants(output_path, plots_dir, top_n=20)
-                logger.info(f"Plots generated in: {plots_dir}")
+                self.print_status(f"Plots generated in: {plots_dir}", "cyan")
             except Exception as pe:
-                logger.error(f"Plotting failed: {pe}")
+                self.print_status(f"Plotting failed: {pe}", "red")
 
         return result_df
     
@@ -125,22 +135,22 @@ class SNPAnalyst:
         df['Bacterial_Specie'] = df['Bacterial_Specie'].str.replace('_', ' ')
         
         # Step 2: Fetching taxonomy ID (using pre-validated ID if available)
-        logger.info("Fetching taxonomy ID...")
+        self.print_status("Fetching taxonomy ID...", "cyan")
         df['Taxonomic_ID'] = tax_id if tax_id else df['Bacterial_Specie'].apply(get_taxid)
         
         # Step 3-4: Extract and normalize depth
-        logger.info("Processing read depth information...")
+        self.print_status("Processing read depth information...", "cyan")
         df['Depth'] = df['Evidence'].apply(extract_depth)
         #df['Depth'] = df['Max_Depth']
         df['Normalized_Depth'] = normalize_depth(df['Depth'])
         
         # Step 5-7: Process amino acid changes
-        logger.info("Analyzing amino acid changes...")
+        self.print_status("Analyzing amino acid changes...", "cyan")
         df['AA_Change'] = df['Effect'].apply(extract_aa_change)
         df['Amino_Acid_Impact_Score'] = df.apply(compute_aa_impact, axis=1)
         
         # Step 8-9: Extract AA positions
-        logger.info("Processing protein positions...")
+        self.print_status("Processing protein positions...", "cyan")
         df['Total_Protein_Length'] = df['Amino_Acid_Position'].apply(
             lambda x: int(str(x).split('/')[-1]) if '/' in str(x) else None
         )
@@ -149,7 +159,7 @@ class SNPAnalyst:
         )
         
         # Step 10-11: UniProt and domain analysis
-        logger.info("Searching UniProt database...")
+        self.print_status("Searching UniProt database...", "cyan")
         uniprot_ids = []
         for index, row in df.iterrows():
             gene = str(row['Gene']).split('_')[0]
@@ -162,17 +172,19 @@ class SNPAnalyst:
             uniprot_ids.append(uid)
         df['UniProt_ID'] = uniprot_ids
         
-        logger.info("Checking domain positions...")
+        self.print_status("Checking domain positions...", "cyan")
         df['Domain_Position_Match'] = df.apply(
             lambda row: check_domain_position(row['UniProt_ID'], row['Mutated_AA']),
             axis=1
         )
         
         # Step 12: Calculate final priority score
-        logger.info("Calculating final priority scores...")
+        self.print_status("Calculating final priority scores...", "cyan")
         df['Final_Priority_Score'] = calculate_priority_score(df)
         
         # Add percentage score
         df['Final_Priority_Score (%)'] = df['Final_Priority_Score'] * 100
+        
+        self.print_status("SNP analysis completed successfully!", "green")
         
         return df
