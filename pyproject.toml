@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snpraefentia"
+version = "2.0.0"
+description = "SNPraefentia: SNP Prioritization Tool"
+authors = [
+    {name = "Nadeem Khan", email = "muneebgojra@gmail.com"},
+    {name = "Muhammad Muneeb Nasir", email = "muneebgojra@gmail.com"}
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bioinformatics",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved",
+]
+dependencies = [
+    "pandas>=1.0.0",
+    "numpy>=1.18.0",
+    "requests>=2.22.0",
+    "ete3>=3.1.1",
+    "openpyxl>=3.1.5",
+    "matplotlib>=3.0.0",
+    "seaborn>=0.10.0",
+    "adjustText>=0.7.3",
+    "rich>=13.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/muneebdev7/SNPraefentia/"
+Repository = "https://github.com/muneebdev7/SNPraefentia/"
+Issues = "https://github.com/muneebdev7/SNPraefentia/issues"
+
+[project.scripts]
+snpraefentia = "snpraefentia.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["snpraefentia*"]
+exclude = ["tests*"]
