@@ -4,7 +4,7 @@
 [![pip](https://img.shields.io/badge/pip-installable-orange.svg?logo=pypi&logoColor=white)](https://pypi.org/)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-yellow.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
 
-[![DOI](https://zenodo.org/badge/988185259.svg)](https://doi.org/10.5281/zenodo.15773668)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17716022.svg)](https://doi.org/10.5281/zenodo.17716022)
 
 [![GitHub License](https://img.shields.io/github/license/muneebdev7/SNPraefentia?color=teal)](https://opensource.org/licenses/Apache-2.0)
 
@@ -265,10 +265,11 @@ We thank the following professionals for their extensive assistance in the devel
 
 ## Citation
 
-If you use SNPraefentia in your research, please cite:
+If you use SNPraefentia in your research, please cite our published paper:
 
-```cmd
-Nadeem Khan, Muhammad Muneeb Nasir, & Kayani, M. ur R. (2025). github.com/muneebdev7/SNPraefentia: SNPraefentia v1.1.0 (v1.1.0). Zenodo. https://doi.org/10.5281/zenodo.15773669
+**Paper Citation:**
+```
+Khan, N., Nasir, M. M., Mushtaq, A., & Kayani, M. U. R. (2025). SNPraefentia: A toolkit to prioritize microbial genome variants linked to health and disease. Bioinformatics Advances, vbaf297. https://doi.org/10.1093/bioadv/vbaf297
 ```
 
-For questions, feature requests, or bug reports, please open an issue on GitHub.
+For questions, feature requests, or bug reports, please [open an issue on GitHub](https://github.com/muneebdev7/SNPraefentia/issues).
