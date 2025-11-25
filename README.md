@@ -1,5 +1,13 @@
 # SNPraefentia: SNP Prioritization from Metagenomic Variants
 
+[![Conda](https://img.shields.io/badge/conda-supported-brightgreen.svg?logo=anaconda&logoColor=white)](https://anaconda.org/)
+[![pip](https://img.shields.io/badge/pip-installable-orange.svg?logo=pypi&logoColor=white)](https://pypi.org/)
+[![Python 3.11](https://img.shields.io/badge/python-3.11-yellow.svg?logo=python&logoColor=white)](https://www.python.org/downloads/)
+
+[![DOI](https://zenodo.org/badge/988185259.svg)](https://doi.org/10.5281/zenodo.15773668)
+
+[![GitHub License](https://img.shields.io/github/license/muneebdev7/SNPraefentia?color=teal)](https://opensource.org/licenses/Apache-2.0)
+
 SNPraefentia is a comprehensive tool for prioritizing Single Nucleotide Polymorphisms (SNPs) in metagenomic variants. It helps in identifying 
 potentially significant variants by analyzing sequencing depth, amino acid changes, and protein domain information.
 
@@ -10,11 +18,11 @@ potentially significant variants by analyzing sequencing depth, amino acid chang
 First, create a new conda environment with Python 3.11:
 
 ```bash
-# Create a new conda environment named 'snp'
-conda create -y -n snprafentia python=3.11
+# Create a new conda environment
+conda create -y -n snpraefentia python=3.11
 
 # Activate the environment
-conda activate snprafentia
+conda activate snpraefentia
 ```
 
 ### Installing SNPraefentia
@@ -52,6 +60,7 @@ SNPraefentia requires the following Python packages (see [`requirements.txt`](re
 - matplotlib (≥3.0.0)
 - seaborn (≥0.10.0)
 - adjustText (≥0.7.3)
+- rich (>=13.0.0)
 
 These dependencies will be installed automatically when using pip.
 
@@ -77,7 +86,7 @@ To verify that the package is installed correctly:
 snpraefentia --version
 ```
 
-This should display the current version (1.0.0).
+This should display the current version (2.0.0).
 
 ## Usage
 
@@ -115,6 +124,9 @@ snpraefentia --input your_data.xlsx --specie "Bacteroides uniformis" --output re
 
 - `--help`, `-h`: Show help message and exit
 - `--version`: Show version and exit
+
+A glimpse of the command line interface:
+![SNPraefentia Help Command](images/snpraefentia_help_cmd.png)
 
 ### Python API
 
@@ -256,9 +268,7 @@ We thank the following professionals for their extensive assistance in the devel
 If you use SNPraefentia in your research, please cite:
 
 ```cmd
-Khan, N., & Nasir, M. M. (2025). SNPraefentia: A Comprehensive Tool for SNP Prioritization in Bacterial Genomes. 
-GitHub repository: https://github.com/muneebdev7/SNPraefentia
-Version 1.0.0
+Nadeem Khan, Muhammad Muneeb Nasir, & Kayani, M. ur R. (2025). github.com/muneebdev7/SNPraefentia: SNPraefentia v1.1.0 (v1.1.0). Zenodo. https://doi.org/10.5281/zenodo.15773669
 ```
 
 For questions, feature requests, or bug reports, please open an issue on GitHub.
