@@ -1,6 +1,6 @@
 """SNPraefentia: SNP Prioritization Tool"""
 
-__version__ = "1.1.0"
+__version__ = "2.0.0"
 
 # Strict dependency list: all are required for full functionality
 REQUIRED_LIBRARIES = [
