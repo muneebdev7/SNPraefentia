@@ -7,21 +7,22 @@ name = "snpraefentia"
 version = "2.0.0"
 description = "SNPraefentia: SNP Prioritization Tool"
 authors = [
-    {name = "Nadeem Khan", email = "muneebgojra@gmail.com"},
-    {name = "Muhammad Muneeb Nasir", email = "muneebgojra@gmail.com"}
+    {name = "Nadeem Khan", email = "nadeemkhanf577977@gmail.com"},
+    {name = "Muhammad Muneeb Nasir", email = "talk2muneeb.ai@gmail.com"}
 ]
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Bioinformatics",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "License :: OSI Approved",
 ]
 dependencies = [
     "pandas>=1.0.0",
