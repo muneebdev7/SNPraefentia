@@ -25,12 +25,18 @@ import argparse
 import logging
 import sys
 import os
+from rich.console import Console
+from rich.table import Table
+from rich.panel import Panel
+from rich.text import Text
+from rich import box
 from . import __version__, check_dependencies
 from .core import SNPAnalyst
 
 class SNPraefentiaCLI:
     def __init__(self):
         self.logger = None
+        self.console = Console()
 
     def setup_logging(self, log_file=None, verbose=False, quiet=False):
         """Configure logging based on command line arguments."""
@@ -52,16 +58,54 @@ class SNPraefentiaCLI:
             logging.getLogger().addHandler(file_handler)
         self.logger = logging.getLogger("snprior")
 
+    def print_banner(self):
+        """Print the SNPraefentia banner with Rich formatting."""
+        banner = r"""
+ ____  _   _ ____                  __            _   _       
+/ ___|| \ | |  _ \ _ __ __ _  ___ / _| ___ _ __ | |_(_) __ _ 
+\___ \|  \| | |_) | '__/ _` |/ _ \ |_ / _ \ '_ \| __| |/ _` |
+ ___) | |\  |  __/| | | (_| |  __/  _|  __/ | | | |_| | (_| |
+|____/|_| \_|_|   |_|  \__,_|\___|_|  \___|_| |_|\__|_|\__,_|
+                                                            
+        """
+        self.console.print(Text(banner, style="bold cyan"))
+        self.console.print(Panel(Text("SNPraefentia CLI Agent", justify="right"), style="bold magenta", expand=False))
+
+    def print_status(self, message, style="green"):
+        """Print status messages with Rich formatting."""
+        self.console.print(f"[+] {message}", style=f"bold {style}")
+
+    def print_help_table(self):
+        """Print help information in a tabular format using Rich."""
+        table = Table(show_header=True, header_style="bold blue", box=box.ROUNDED, highlight=True)
+        table.add_column("Options", style="bold cyan", width=30, min_width=25)
+        table.add_column("Description", style="white", min_width=40)
+        
+        table.add_row("-h, --help", "Show this help message and exit")
+        table.add_row("-i, --input", "Path to input file ('supports .xlsx, .xls, .csv, .tsv')")
+        table.add_row("-s, --specie", "Bacterial specie name (e.g., 'Bacteroides uniformis')")
+        table.add_row("-o, --output", "Path to save output file ('supports .xlsx, .xls, .csv, .tsv')")
+        table.add_row("-f, --format", "Output format override ('excel/csv/tsv')")
+        table.add_row("-ut, --uniprot-tolerance", "Length tolerance for UniProt entries (default: 50)")
+        table.add_row("-v, --verbose", "Increase output verbosity")
+        table.add_row("-q, --quiet", "Suppress all non-error output")
+        table.add_row("-l, --log-file", "Path to save log file")
+        table.add_row("--version", "Show package version")
+        
+        self.console.print(table)
+
     def parse_args(self):
         parser = argparse.ArgumentParser(
             description="SNPraefentia: SNP Prioritization Tool",
             epilog="For more information, visit: https://github.com/muneebdev7/SNPraefentia",
+            add_help=False
         )
-        parser.add_argument("--input", "-i", required=True, 
+        parser.add_argument("-h", "--help", action="store_true", help="Show this help message and exit")
+        parser.add_argument("--input", "-i", required=False, 
                             help="Path to input file (supports .xlsx, .xls, .csv, .tsv, .txt)")
-        parser.add_argument("--specie", "-s", required=True,
+        parser.add_argument("--specie", "-s", required=False,
                             help="Bacterial specie name (e.g., 'Bacteroides uniformis')")
-        parser.add_argument("--output", "-o", required=True,
+        parser.add_argument("--output", "-o", required=False,
                             help="Path to save output file (supports .xlsx, .xls, .csv, .tsv, .txt)")
         parser.add_argument("--format", "-f", choices=["excel", "csv", "tsv"], default=None,
                             help="Output format override (default: determined from output file extension)")
@@ -73,8 +117,8 @@ class SNPraefentiaCLI:
                             help="Suppress all non-error output")
         parser.add_argument("--log-file", "-l",
                             help="Path to save log file")
-        parser.add_argument("--version", action="version",
-                            version=f"SNPraefentia version {__version__}")
+        parser.add_argument("--version", action="store_true",
+                            help="Show package version")
         args = parser.parse_args()
         if args.verbose and args.quiet:
             parser.error("--verbose and --quiet cannot be used together")
@@ -94,37 +138,62 @@ class SNPraefentiaCLI:
         return args
 
     def run(self):
+        # Always show banner
+        self.print_banner()
+        
         args = self.parse_args()
+        
+        # Handle help or no arguments
+        if args.help or len(sys.argv) == 1:
+            self.print_help_table()
+            self.console.print(Panel(Text("For more information, visit: https://github.com/muneebdev7/SNPraefentia", justify="center"), style="bold green", expand=False))
+            return 0
+        
+        # Handle version
+        if args.version:
+            self.console.print(f"SNPraefentia version {__version__}", style="bold green")
+            return 0
+        
+        # Validate required arguments
+        if not (args.input and args.specie and args.output):
+            self.console.print("Error: --input, --specie, and --output are required for analysis.", style="bold red")
+            self.print_help_table()
+            return 1
+        
         args = self.ensure_output_extension(args)
         self.setup_logging(log_file=args.log_file, verbose=args.verbose, quiet=args.quiet)
 
         # Dependency check
+        self.print_status("Checking dependencies...")
         try:
             check_dependencies(raise_on_missing=True)
+            self.print_status("All dependencies found.")
         except ImportError as e:
-            self.logger.error(str(e))
-            sys.exit(1)
+            self.console.print(f"Dependency error: {str(e)}", style="bold red")
+            return 1
 
         try:
-            self.logger.info(f"Starting SNPraefentia v{__version__}")
-            self.logger.info(f"Processing input file: {args.input}")
-            self.logger.info(f"Target specie: {args.specie}")
-            self.logger.info(f"Output will be saved to: {args.output}")
+            self.print_status(f"Starting SNPraefentia v{__version__}")
+            self.print_status(f"Processing input file: {args.input}", "cyan")
+            self.print_status(f"Target specie: {args.specie}", "cyan")
+            self.print_status(f"Output will be saved to: {args.output}", "cyan")
+            
             analyst = SNPAnalyst(uniprot_tolerance=args.uniprot_tolerance)
+            
             try:
                 analyst.run(
                     input_file=args.input,
                     specie=args.specie,
                     output_file=args.output
                 )
-                self.logger.info(f"Results saved to: {args.output}")
-                self.logger.info("SNPraefentia completed successfully")
+                self.print_status(f"Results saved to: {args.output}")
+                self.print_status("SNPraefentia completed successfully!", "green")
             except ValueError as ve:
-                self.logger.error(str(ve))
-                sys.exit(1)
+                self.console.print(f"Error: {str(ve)}", style="bold red")
+                return 1
         except Exception as e:
-            self.logger.error(f"Error: {str(e)}", exc_info=args.verbose)
-            sys.exit(1)
+            self.console.print(f"Error: {str(e)}", style="bold red")
+            return 1
         return 0
 
 def main():
